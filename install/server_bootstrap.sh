@@ -10,6 +10,7 @@ DB_PASSWD=
 # fill the HOME variable and the variables in the
 # weatherstation.conf configuration file
 HOME=
+cd "$HOME"
 cat << EOF > "$HOME"/.weatherstation.conf
 [database]
 host = localhost
@@ -32,29 +33,28 @@ host =
 port =
 EOF
 
+# install necessary libraries
 apt update
 apt install -y git apache2 php libapache2-mod-php mariadb-server php-mysql
-
 pip3 install -y mysql-connector-python
 
-git clone https://github.com/jschnab/weather-station.git
-
+# configure and start the dashboard web server
 echo "export DB_USER=$DB_USER" >> /etc/apache2/envvars
 echo "export DB_PASSWD=$DB_PASSWD" >> /etc/apache2/envvars
-
 mv weather-station/install/apache-virtual-server.conf /etc/apache2/sites-available/000-default.conf
 chown www-data: /etc/apache2/sites-available/000-default.conf
-
 mkdir /var/www/html/weather-station
 cp -R weather-station/web/* /var/www/html/weather-station/
 chown -R  www-data: /var/www/html/weather-station/
-
 curl "https://jpgraph.net/download/download.php?p=49" > jpgraph.tar.gz
 tar -xzf jpgraph.tar.gz -C /usr/share/
 
-cp weather-station/install/server_service/etc/systemd/system/weatherstation_server.service
-
+# configure mysql
 mysql < weather-station/database/create_tables.sql
+mysql --execute "CREATE USER '$DB_USER' IDENTIFIED BY '$DB_PASSWD'"
+mysql --execute "GRANT ALL PRIVILEGES on weather_station.* TO '$DB_USER'"
 
+# start the weatherstation data server
+cp weather-station/install/server_service/etc/systemd/system/weatherstation_server.service
 systemctl enable weatherstation_server.service
 systemctl start weatherstation.service
