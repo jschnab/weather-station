@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Home Environment Monitoring</title>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="index.html">Temperature</a></li>
+                <li><a href="humidity.html">Humidity</a></li>
+                <li><a href="summary.html">Summary"</a></li>
+            </ul>
+        </nav>
+        <form action="display_plot.php" method="POST">
+            <select name="timescale" id="timescale-select">
+                <option value="day" selected>Last day</option>
+                <option value="3days">Last 3 days</option>
+                <option value="week">Last week</option>
+            </select>
+            <p><input type="submit" value="Show data"></p>
+        </form>
+    </body>
+</html>

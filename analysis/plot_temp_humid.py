@@ -12,7 +12,6 @@ import pandas as pd
 from pandas.plotting import register_matplotlib_converters
 
 register_matplotlib_converters()
-
 CSV_PATH = "temperatures_est.csv"
 FIGSIZE = (12, 8)
 EVERY_5_MINUTES = tuple(range(0, 60, 5))
@@ -78,8 +77,11 @@ def plot_temp_humid(csv_path, timeframe="day"):
         parse_dates=[TIMESTAMP_COLUMN],
         index_col=TIMESTAMP_COLUMN,
     )
-    #df.index = df.index.tz_convert("US/Eastern")
-    #tz = df.index.tz
+    # if the data was in a timezone different that the local one,
+    # you would have to convert the timezone and pass the timezone
+    # below in the DateFormatter() object
+    # df.index = df.index.tz_convert("US/Eastern")
+    # tz = df.index.tz
     df.reset_index(inplace=True)
 
     df = filter_outliers(df)
@@ -129,7 +131,8 @@ def plot_temp_humid(csv_path, timeframe="day"):
     elif timeframe == "day":
         ax1.xaxis.set_major_locator(mdates.HourLocator(byhour=EVERY_2_HOURS))
         ax1.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M"))
-        #ax1.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M", tz=tz))
+        # ax1.xaxis.set_major_formatter(
+        #     mdates.DateFormatter("%m/%d %H:%M", tz=tz))
         ax1.xaxis.set_minor_locator(mdates.HourLocator())
 
     elif timeframe == "3days":
