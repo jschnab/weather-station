@@ -1,20 +1,15 @@
 import os
 import sys
 
-from configparser import ConfigParser
-from pathlib import Path
-
 import mysql.connector
 
 sys.path.append(os.path.abspath(".."))
 
 from database import sql_commands
-
-HOME = str(Path.home())
-CONFIG_FILE = os.path.join(HOME, ".weatherstation.conf")
+from utils.config import get_config
 
 
-def get_connection(autocommit=False, config_file=CONFIG_FILE):
+def get_connection(autocommit=False):
     """
     Get a connection to a MySQL database.
 
@@ -24,13 +19,12 @@ def get_connection(autocommit=False, config_file=CONFIG_FILE):
         connection information (optional, default ~/.weatherstation.conf)
     :returns: connection object
     """
-    config = ConfigParser()
-    config.read(CONFIG_FILE)
-    host = config["database"]["host"]
-    port = int(config["database"]["port"])
-    database = config["database"]["database"]
-    username = config["database"]["username"]
-    password = config["database"]["password"]
+    config = get_config()["database"]
+    host = config["host"]
+    port = int(config["port"])
+    database = config["database"]
+    username = config["username"]
+    password = config["password"]
     conn = mysql.connector.connect(
         host=host,
         port=port,

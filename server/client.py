@@ -6,9 +6,6 @@ import traceback
 
 import libclient
 
-HOST = "localhost"
-PORT = 65432
-
 
 def start_connection(selector, host, port, request):
     addr = (host, port)
@@ -21,7 +18,7 @@ def start_connection(selector, host, port, request):
     selector.register(sock, events, data=message)
 
 
-def send_data(data, host=HOST, port=PORT):
+def send_data(data, host, port):
     request = {
         "type": "text/json",
         "encoding": "utf8",

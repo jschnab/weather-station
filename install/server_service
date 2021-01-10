@@ -1,0 +1,13 @@
+[Unit]
+Description=weather station server
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/weather-station/server
+ExecStart=/usr/local/bin/python3 server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

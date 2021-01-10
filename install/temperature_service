@@ -1,0 +1,13 @@
+[Unit]
+Description=weather station temperature recording
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/weather-station/sensing
+ExecStart=/usr/local/bin/python3 server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

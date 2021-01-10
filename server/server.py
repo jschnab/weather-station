@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
+import os
 import selectors
 import socket
+import sys
 import traceback
 
 import libserver
 
-HOST = "localhost"
-PORT = 65432
+sys.path.append(os.path.abspath(".."))
+
+from utils.config import get_config
 
 
 def accept_wrapper(sock, selector):
@@ -48,7 +51,8 @@ def start_server(host, port):
 
 
 def main():
-    start_server(HOST, PORT)
+    port = get_config()["communication"]["port"]
+    start_server("localhost", port)
 
 
 if __name__ == "__main__":

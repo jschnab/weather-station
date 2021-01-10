@@ -10,14 +10,7 @@ import Adafruit_DHT as dht
 sys.path.insert(os.path.abspath(".."))
 
 from server.client import send_data
-
-CSV_COLUMNS = ("value", "timestamp", "location_id", "device_id", "sensor_id")
-TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
-SENSOR_GPIO_PORT = 23
-DEVICE_ID = 1
-SENSOR_ID = 1
-HOST = "localhost"
-PORT = 65432
+from utils.config import get_config
 
 
 def write_csv(file_name, data, column_names):
@@ -52,16 +45,25 @@ def measure_temp_humid(sensor_gpio_port, timestamp_format):
 
 
 def main():
+    config = get_config()
+    gpio_port = config["temperature"]["gpio_port"]
+    timestamp_format = config["recording"]["timestamp_format"]
+    device_id = config["temperature"]["device_id"]
+    sensor_id = config["temperature"]["sensor_id"]
+    csv_columns = config["recording"]["csv_columns"].split(",")
+    host = config["communication"]["host"]
+    port = config["communication"]["port"]
+
     while True:
-        data = measure_temp_humid(SENSOR_GPIO_PORT, TIMESTAMP_FORMAT)
+        data = measure_temp_humid(gpio_port, timestamp_format)
         for d in data:
-            d.update({"device_id": DEVICE_ID, "sensor_id": SENSOR_ID})
-            send_data(data=d, host=HOST, port=PORT)
+            d.update({"device_id": device_id, "sensor_id": sensor_id})
+            send_data(data=d, host=host, port=port)
             parameter = d.pop("parameter")
             write_csv(
                 file_name=f"{parameter}.csv",
                 data=d,
-                column_names=CSV_COLUMNS,
+                column_names=csv_columns,
             )
         sleep(60)
 

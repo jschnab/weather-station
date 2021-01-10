@@ -1,4 +1,5 @@
-USE WEATHER_STATION;
+CREATE DATABASE IF NOT EXISTS weather_station;
+USE weather_station;
 
 CREATE TABLE IF NOT EXISTS location (
     id SERIAL PRIMARY KEY,
