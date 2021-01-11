@@ -1,4 +1,3 @@
-import os
 from setuptools import setup
 
 __version__ = '0.1.0'
@@ -6,6 +5,9 @@ __version__ = '0.1.0'
 setup(
     name='weather-station',
     packages=['weather_station'],
+    entry_points={
+        "console_scripts": ["weather-station=weather_station.main:main"],
+    },
     version=__version__,
     description='Weather station',
     url='https://github.com/jschnab/weather-station',

@@ -5,8 +5,7 @@ After=network.target
 [Service]
 User=pi
 Group=pi
-WorkingDirectory=/home/pi/weather-station/server
-ExecStart=server.py
+ExecStart=weather-station --listen
 Restart=always
 RestartSec=5
 

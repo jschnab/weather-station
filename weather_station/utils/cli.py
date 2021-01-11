@@ -16,5 +16,11 @@ def parse_cli():
         action="store_true",
         help="start the server, listen for requests to store recordings",
     )
+    parser.add_argument(
+        "-t",
+        "--temperature",
+        action="store_true",
+        help="start recording temperature and humidity",
+    )
     args = parser.parse_args()
     return args

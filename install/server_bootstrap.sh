@@ -3,7 +3,6 @@
 set -ex
 
 # fill these variables before running this script
-HOME=
 DB_HOST=
 DB_PORT=
 DB_USER=
@@ -12,10 +11,8 @@ DEVICE_ID=
 LOCATION_NAME=
 TEMPERATURE_GPIO_PORT=
 TEMPERATURE_SENSOR_ID=
-COM_HOST=
-COM_PORT=
-
-cd "$HOME"
+SERVER_HOST=
+SERVER_PORT=
 
 mkdir -p /etc/weatherstation
 cat << EOF > /etc/weatherstation/weatherstation.conf
@@ -38,17 +35,17 @@ sensor_id = $TEMPERATURE_SENSOR_ID
 
 [recording]
 timestamp_format = %Y-%m-%d %H:%M:%S
-csv_columns = value,timestamp,location_id,device_id,sensor_id
+csv_columns = value,timestamp,location,device_id,sensor_id
 
 [server]
-host = $COM_HOST
-port = $COM_PORT
+host = $SERVER_HOST
+port = $SERVER_PORT
 bind_address = 0.0.0.0
 encoding = utf-8
 
 [logging]
 log_file = /var/log/weatherstation/log
-lebel = info
+level = info
 EOF
 chown -R pi: /etc/weatherstation
 
