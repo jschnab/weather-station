@@ -1,10 +1,6 @@
-import os
-
 from configparser import ConfigParser
-from pathlib import Path
 
-HOME = str(Path.home())
-CONFIG_FILE = os.path.join(HOME, ".weatherstation.conf")
+from weather_station.settings import CONFIG_FILE
 
 
 def get_config(config_file=CONFIG_FILE):

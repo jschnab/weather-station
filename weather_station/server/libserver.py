@@ -1,19 +1,20 @@
-import io
 import json
-import os
 import selectors
 import struct
 import sys
 
-sys.path.append(os.path.abspath(".."))
+from weather_station.database import db_utils
+from weather_station.utils.config import get_config
+from weather_station.utils.log import get_logger
 
-from database import db_utils
+logger = get_logger()
 
 HDRLEN = 2  # length of the request header
 
 
 class Message:
     def __init__(self, selector, sock, addr):
+        self.encoding = get_config["server"]["encoding"]
         self.selector = selector
         self.sock = sock
         self.addr = addr
@@ -53,7 +54,7 @@ class Message:
 
     def _write(self):
         if self._send_buffer:
-            print(f"sending {repr(self._send_buffer)} to {self.addr}")
+            logger.info(f"sending {repr(self._send_buffer)} to {self.addr}")
             try:
                 sent = self.sock.send(self._send_buffer)
             except BlockingIOError:
@@ -69,14 +70,7 @@ class Message:
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
 
     def _json_decode(self, json_bytes, encoding):
-        wrapper = io.TextIOWrapper(
-            io.BytesIO(json_bytes),
-            encoding=encoding,
-            newline="",
-        )
-        obj = json.load(wrapper)
-        wrapper.close()
-        return obj
+        return json.loads(json_bytes.decode(encoding))
 
     def _create_message(
         self,
@@ -91,14 +85,14 @@ class Message:
             "content-encoding": content_encoding,
             "content-length": len(content_bytes),
         }
-        jsonheader_bytes = self._json_encode(jsonheader, "utf8")
+        jsonheader_bytes = self._json_encode(jsonheader, self.encoding)
         message_hdr = struct.pack(">H", len(jsonheader_bytes))
         message = message_hdr + jsonheader_bytes + content_bytes
         return message
 
     def _create_response_json_content(self):
         content = "200 Request was processed"
-        content_encoding = "utf8"
+        content_encoding = self.encoding
         response = {
             "content_bytes": self._json_encode(content, content_encoding),
             "content_type": "text/json",
@@ -142,11 +136,11 @@ class Message:
         self._write()
 
     def close(self):
-        print("closing connection to", self.addr)
+        logger.info("closing connection to", self.addr)
         try:
             self.selector.unregister(self.sock)
         except Exception as e:
-            print(
+            logger.error(
                 "Error: selector.unregister() exception for "
                 f"{self.addr}: {repr(e)}"
             )
@@ -154,7 +148,7 @@ class Message:
         try:
             self.sock.close()
         except OSError as e:
-            print(
+            logger.error(
                 "Error: socket.close() exception for "
                 f"{self.addr}: {repr(e)}",
             )
@@ -173,7 +167,7 @@ class Message:
         hdrlen = self._jsonheader_len
         if len(self._recv_buffer) >= hdrlen:
             self.jsonheader = self._json_decode(
-                self._recv_buffer[:hdrlen], "utf8"
+                self._recv_buffer[:hdrlen], self.encoding
             )
             self._recv_buffer = self._recv_buffer[hdrlen:]
             for reqhdr in (
@@ -197,12 +191,13 @@ class Message:
             encoding = self.jsonheader["content-encoding"]
             self.request = self._json_decode(data, encoding)
             db_utils.load_data(self.request)
-            print(f"Received request {repr(self.request)} from {self.addr}")
+            logger.info(
+                f"Received request {repr(self.request)} from {self.addr}")
 
         else:
             # binary or unknown content-type
             self.request = data
-            print(
+            logger.info(
                 f"Received {self.jsonheader['content-type']} request from "
                 f"{self.addr}"
             )

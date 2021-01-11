@@ -4,7 +4,10 @@ import sys
 
 from pathlib import Path
 
-from db_utils import load_data
+from weather_station.database.db_utils import load_data
+from weather_station.utils.log import get_logger
+
+logger = get_logger()
 
 HOME = str(Path.home())
 CSV_PATH = os.path.join(HOME, "weather-station", "analysis")
@@ -33,7 +36,7 @@ def main():
     elif location == "master bedroom":
         csv_path = os.path.join(CSV_PATH, "temp_master_bed.csv")
     else:
-        print(f"invalid location '{location}', exiting")
+        logging.error(f"invalid location '{location}', exiting")
         return
     load_csv(location, csv_path)
 

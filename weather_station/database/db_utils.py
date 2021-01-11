@@ -1,12 +1,10 @@
-import os
-import sys
-
 import mysql.connector
 
-sys.path.append(os.path.abspath(".."))
+from weather_station.database import sql_commands
+from weather_station.utils.config import get_config
+from weather_station.utils.log import get_logger
 
-from database import sql_commands
-from utils.config import get_config
+logger = get_logger()
 
 
 def get_connection(autocommit=False):
@@ -63,6 +61,7 @@ def execute_sql(
         if commit:
             conn.commit()
     except Exception as e:
+        logger.error(e)
         conn.rollback()
         raise
     finally:
@@ -93,6 +92,7 @@ def query_sql(
         cur.execute(statement, parameters)
         return cur.fetchall()
     except Exception as e:
+        logger.error(e)
         conn.rollback()
         raise
     finally:

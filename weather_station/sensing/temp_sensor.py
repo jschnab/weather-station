@@ -1,16 +1,15 @@
 import csv
-import os
-import sys
 
 from datetime import datetime
 from time import sleep
 
 import Adafruit_DHT as dht
 
-sys.path.insert(os.path.abspath(".."))
+from weather_station.server.client import send_data
+from weather_station.utils.config import get_config
+from weather_station.utils.log import get_logger
 
-from server.client import send_data
-from utils.config import get_config
+logger = get_logger()
 
 
 def write_csv(file_name, data, column_names):

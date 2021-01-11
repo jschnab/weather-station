@@ -3,11 +3,14 @@ import selectors
 import struct
 import sys
 
+from weather_station.utils.config import get_config
+
 HDRLEN = 2
 
 
 class Message:
     def __init__(self, selector, sock, addr, request):
+        self.encoding = get_config()["client"]["encoding"]
         self.selector = selector
         self.sock = sock
         self.addr = addr
@@ -72,7 +75,7 @@ class Message:
             "content-encoding": content_encoding,
             "content-length": len(content_bytes),
         }
-        jsonheader_bytes = self._json_encode(jsonheader, "utf8")
+        jsonheader_bytes = self._json_encode(jsonheader, self.encoding)
         message_hdr = struct.pack(">H", len(jsonheader_bytes))
         message = message_hdr + jsonheader_bytes + content_bytes
         return message
@@ -168,7 +171,7 @@ class Message:
         hdrlen = self._jsonheader_len
         if len(self._recv_buffer) >= hdrlen:
             self.jsonheader = self._json_decode(
-                self._recv_buffer[:hdrlen], "utf8"
+                self._recv_buffer[:hdrlen], self.encoding
             )
             self._recv_buffer = self._recv_buffer[hdrlen:]
             for reqhdr in (

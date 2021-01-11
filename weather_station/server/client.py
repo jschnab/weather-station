@@ -4,7 +4,11 @@ import selectors
 import socket
 import traceback
 
-import libclient
+from weather_station.server import libclient
+from weather_station.utils.config import get_config
+from weather_station.utils.log import get_logger
+
+logger = get_logger()
 
 
 def start_connection(selector, host, port, request):
@@ -21,7 +25,7 @@ def start_connection(selector, host, port, request):
 def send_data(data, host, port):
     request = {
         "type": "text/json",
-        "encoding": "utf8",
+        "encoding": get_config()["client"]["encoding"],
         "content": data
     }
     sel = selectors.DefaultSelector()
@@ -35,7 +39,7 @@ def send_data(data, host, port):
             try:
                 message.process_events(mask)
             except Exception:
-                print(
+                logger.error(
                     f"Error for {message.addr}:\n"
                     f"{traceback.format_exc()}"
                 )
@@ -52,7 +56,8 @@ def main():
         "device_id": 1,
         "sensor_id": 1,
     }
-    send_data(data)
+    config = get_config()["server"]
+    send_data(data, config["host"], int(config["port"]))
 
 
 if __name__ == "__main__":
