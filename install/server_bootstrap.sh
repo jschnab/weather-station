@@ -62,5 +62,7 @@ systemctl restart mariadb.service
 cp "$HERE"/weatherstation_server.service /etc/systemd/system/weatherstation_server.service
 mkdir -p /var/log/weatherstation
 chown -R pi: /var/log/weatherstation
+cd "$HERE"/..
+pip3 install .
 systemctl enable weatherstation_server.service
 systemctl start weatherstation_server.service

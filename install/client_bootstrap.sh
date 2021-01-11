@@ -2,6 +2,8 @@
 
 set -xe
 
+HERE=$(cd "$(dirname "$0")" && pwd)
+
 # fill these variables before running this script
 DB_HOST=
 DB_PORT=
@@ -55,8 +57,10 @@ chown -R pi: /etc/weatherstation
 
 pip3 install Adafruit_Python_DHT
 
-git clone https://github.com/jschnab/weather-station.git
-cp weather-station/install/weatherstation_temperature.service /etc/systemd/system/weatherstation_temperature.service
+cp "$HERE"/weatherstation_temperature.service /etc/systemd/system/weatherstation_temperature.service
+
+cd "$HERE"/..
+pip3 install .
 
 systemctl enable weatherstation_temperature.service
 systemctl start weatherstation_temperature.service
