@@ -5,10 +5,6 @@ set -xe
 HERE=$(cd "$(dirname "$0")" && pwd)
 
 # fill these variables before running this script
-DB_HOST=
-DB_PORT=
-DB_USER=
-DB_PASSWD=
 DEVICE_ID=
 LOCATION_NAME=
 TEMPERATURE_GPIO_PORT=
@@ -18,13 +14,6 @@ SERVER_PORT=
 
 mkdir -p /etc/weatherstation
 cat << EOF > /etc/weatherstation/weatherstation.conf
-[database]
-host = $DB_HOST
-port = $DB_PORT
-database = weather_station
-username = $DB_USER
-password = $DB_PASSWD
-
 [device]
 device_id = $DEVICE_ID
 
