@@ -23,20 +23,6 @@ database = weather_station
 username = $DB_USER
 password = $DB_PASSWD
 
-[device]
-device_id = $DEVICE_ID
-
-[location]
-name = $LOCATION_NAME 
-
-[temperature]
-gpio_port = $TEMPERATURE_GPIO_PORT
-sensor_id = $TEMPERATURE_SENSOR_ID
-
-[recording]
-timestamp_format = %Y-%m-%d %H:%M:%S
-csv_columns = value,timestamp,location,device_id,sensor_id
-
 [server]
 host = $SERVER_HOST
 port = $SERVER_PORT

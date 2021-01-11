@@ -3,7 +3,6 @@
 set -xe
 
 # fill these variables before running this script
-HOME=
 DB_HOST=
 DB_PORT=
 DB_USER=
@@ -14,8 +13,6 @@ TEMPERATURE_GPIO_PORT=
 TEMPERATURE_SENSOR_ID=
 SERVER_HOST=
 SERVER_PORT=
-
-cd "$HOME"
 
 mkdir -p /etc/weatherstation
 cat << EOF > /etc/weatherstation/weatherstation.conf
@@ -35,6 +32,7 @@ name = $LOCATION_NAME
 [temperature]
 gpio_port = $TEMPERATURE_GPIO_PORT
 sensor_id = $TEMPERATURE_SENSOR_ID
+interval_seconds = 60
 
 [recording]
 timestamp_format = %Y-%m-%d %H:%M:%S
@@ -44,6 +42,9 @@ csv_columns = value,timestamp,location,device_id,sensor_id
 host = $SERVER_HOST
 port = $SERVER_PORT
 bind_address = 0.0.0.0
+encoding = utf-8
+
+[client]
 encoding = utf-8
 
 [logging]

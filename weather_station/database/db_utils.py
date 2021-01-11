@@ -13,8 +13,6 @@ def get_connection(autocommit=False):
 
     :param bool autocommit: if SQL commands should be automatically committed
         (optional, default False)
-    :param str config_file: path to the config file containing database
-        connection information (optional, default ~/.weatherstation.conf)
     :returns: connection object
     """
     config = get_config()["database"]
