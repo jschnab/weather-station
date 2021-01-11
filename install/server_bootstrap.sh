@@ -2,15 +2,13 @@
 
 set -ex
 
+HERE=$(cd "$(dirname "$0")" && pwd)
+
 # fill these variables before running this script
 DB_HOST=
 DB_PORT=
 DB_USER=
 DB_PASSWD=
-DEVICE_ID=
-LOCATION_NAME=
-TEMPERATURE_GPIO_PORT=
-TEMPERATURE_SENSOR_ID=
 SERVER_HOST=
 SERVER_PORT=
 
@@ -43,10 +41,10 @@ pip3 install mysql-connector-python
 # configure and start the dashboard web server
 echo "export DB_USER=$DB_USER" >> /etc/apache2/envvars
 echo "export DB_PASSWD=$DB_PASSWD" >> /etc/apache2/envvars
-cp weather-station/install/apache-virtual-server.conf /etc/apache2/sites-available/000-default.conf
+cp "$HERE"/apache-virtual-server.conf /etc/apache2/sites-available/000-default.conf
 chown www-data: /etc/apache2/sites-available/000-default.conf
 mkdir -p /var/www/html/weather_station
-cp -R weather-station/web/* /var/www/html/weather_station/
+cp -R "$HERE"/../weather-station/web/* /var/www/html/weather_station/
 chown -R  www-data: /var/www/html/weather_station/
 curl "https://jpgraph.net/download/download.php?p=49" > jpgraph.tar.gz
 tar -xzf jpgraph.tar.gz -C /usr/share/
@@ -54,14 +52,14 @@ rm jpgraph.tar.gz
 systemctl restart apache2.service
 
 # configure mysql
-mysql < weather-station/database/create_tables.sql
+mysql < "$HERE"/../weather_station/database/create_tables.sql
 mysql --execute "CREATE USER IF NOT EXISTS '$DB_USER' IDENTIFIED BY '$DB_PASSWD'"
 mysql --execute "GRANT ALL PRIVILEGES on weather_station.* TO '$DB_USER'"
 sed -i -E 's/^#(general_log.*)/\1/g' /etc/mysql/mariadb.conf.d/50-server.cnf
 systemctl restart mariadb.service
 
 # start the weatherstation data server
-cp weather-station/install/weatherstation_server.service /etc/systemd/system/weatherstation_server.service
+cp "$HERE"/weatherstation_server.service /etc/systemd/system/weatherstation_server.service
 mkdir -p /var/log/weatherstation
 chown -R pi: /var/log/weatherstation
 systemctl enable weatherstation_server.service

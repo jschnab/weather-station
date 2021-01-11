@@ -4,7 +4,7 @@ __version__ = '0.1.0'
 
 setup(
     name='weather-station',
-    packages=['weather_station'],
+    packages=find_packages(include=['weather_station.*']),
     entry_points={
         "console_scripts": ["weather-station=weather_station.main:main"],
     },
