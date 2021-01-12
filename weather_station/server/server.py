@@ -13,7 +13,7 @@ logger = get_logger()
 
 def accept_wrapper(sock, selector):
     conn, addr = sock.accept()
-    logger.info("Accepted connection from", addr)
+    logger.info(f"Accepted connection from {addr}")
     conn.setblocking(False)
     message = libserver.Message(selector, conn, addr)
     selector.register(conn, selectors.EVENT_READ, data=message)
@@ -26,7 +26,7 @@ def start_server(host, port):
     lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     lsock.bind((host, port))
     lsock.listen()
-    logger.info("Listening on", (host, port))
+    logger.info(f"Listening on {host}:{port}")
     lsock.setblocking(False)
     sel.register(lsock, selectors.EVENT_READ, data=None)
 
@@ -49,7 +49,7 @@ def start_server(host, port):
 
 
 def listen():
-    config = get_config["server"]
+    config = get_config()["server"]
     port = int(config["port"])
     start_server(config["bind_address"], port)
 

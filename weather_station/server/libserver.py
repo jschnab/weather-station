@@ -14,7 +14,7 @@ HDRLEN = 2  # length of the request header
 
 class Message:
     def __init__(self, selector, sock, addr):
-        self.encoding = get_config["server"]["encoding"]
+        self.encoding = get_config()["server"]["encoding"]
         self.selector = selector
         self.sock = sock
         self.addr = addr
@@ -136,7 +136,7 @@ class Message:
         self._write()
 
     def close(self):
-        logger.info("closing connection to", self.addr)
+        logger.info(f"closing connection to {self.addr}")
         try:
             self.selector.unregister(self.sock)
         except Exception as e:

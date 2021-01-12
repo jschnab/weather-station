@@ -4,6 +4,9 @@ import struct
 import sys
 
 from weather_station.utils.config import get_config
+from weather_station.utils.log import get_logger
+
+logger = get_logger()
 
 HDRLEN = 2
 
