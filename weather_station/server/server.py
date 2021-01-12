@@ -49,7 +49,7 @@ def start_server(host, port):
 
 
 def listen():
-    config = get_config["server"]
+    config = get_config()["server"]
     port = int(config["port"])
     start_server(config["bind_address"], port)
 

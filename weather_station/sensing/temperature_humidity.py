@@ -1,4 +1,5 @@
 import csv
+import os
 
 from datetime import datetime
 from time import sleep
@@ -6,6 +7,7 @@ from time import sleep
 import Adafruit_DHT as dht
 
 from weather_station.server.client import send_data
+from weather_station.settings import APP_DIR
 from weather_station.utils.config import get_config
 from weather_station.utils.log import get_logger
 
@@ -68,7 +70,7 @@ def record():
             send_data(data=d, host=host, port=port)
             parameter = d.pop("parameter")
             write_csv(
-                file_name=f"{parameter}.csv",
+                file_name=os.path.join(APP_DIR, f"{parameter}.csv"),
                 data=d,
                 column_names=csv_columns,
             )
