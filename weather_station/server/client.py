@@ -13,7 +13,7 @@ logger = get_logger()
 
 def start_connection(selector, host, port, request):
     addr = (host, port)
-    print(f"Starting connection to {addr}")
+    logger.info(f"Starting connection to {addr}")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setblocking(False)
     sock.connect_ex(addr)
