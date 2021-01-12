@@ -44,7 +44,10 @@ level = info
 EOF
 chown -R pi: /etc/weatherstation
 
-pip3 install Adafruit_Python_DHT
+mkdir -p /var/log/weatherstation
+chown -R pi: /var/log/weatherstation
+
+pip3 install Adafruit_Python_DHT mysql-connector-python
 
 cp "$HERE"/weatherstation_temperature.service /etc/systemd/system/weatherstation_temperature.service
 
