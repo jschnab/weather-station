@@ -49,11 +49,11 @@ def record():
     device_id = config["device"]["device_id"]
     sensor_id = config["temperature"]["sensor_id"]
     gpio_port = config["temperature"]["gpio_port"]
-    interval_seconds = config["temperature"]["interval_seconds"]
+    interval_seconds = int(config["temperature"]["interval_seconds"])
     csv_columns = config["recording"]["csv_columns"].split(",")
     timestamp_format = config["recording"]["timestamp_format"]
     host = config["server"]["host"]
-    port = config["server"]["port"]
+    port = int(config["server"]["port"])
 
     while True:
         data = measure_temp_humid(gpio_port, timestamp_format)

@@ -36,7 +36,7 @@ def main():
     elif location == "master bedroom":
         csv_path = os.path.join(CSV_PATH, "temp_master_bed.csv")
     else:
-        logging.error(f"invalid location '{location}', exiting")
+        logger.error(f"invalid location '{location}', exiting")
         return
     load_csv(location, csv_path)
 

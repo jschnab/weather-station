@@ -4,6 +4,9 @@ import struct
 import sys
 
 from weather_station.utils.config import get_config
+from weather_station.utils.log import get_logger
+
+logger = get_logger()
 
 HDRLEN = 2
 
@@ -51,7 +54,7 @@ class Message:
 
     def _write(self):
         if self._send_buffer:
-            print(f"Sending {repr(self._send_buffer)} to {self.addr}.")
+            logger.info(f"Sending {repr(self._send_buffer)} to {self.addr}.")
             try:
                 sent = self.sock.send(self._send_buffer)
             except BlockingIOError:
@@ -82,11 +85,11 @@ class Message:
 
     def _process_response_json_content(self):
         content = self.response
-        print(f"got response: '{content}'")
+        logger.info(f"got response: '{content}'")
 
     def _process_response_binary_content(self):
         content = self.response
-        print(f"got response: {repr(content)}")
+        logger.info(f"got response: {repr(content)}")
 
     def process_events(self, mask):
         if mask & selectors.EVENT_READ:
@@ -120,11 +123,11 @@ class Message:
                 self._set_selector_events_mask("r")
 
     def close(self):
-        print(f"closing connection to {self.addr}")
+        logger.info(f"closing connection to {self.addr}")
         try:
             self.selector.unregister(self.sock)
         except Exception as e:
-            print(
+            logger.error(
                 "Error: selector.unregister() exception for "
                 f"{self.addr}: {repr(e)}"
             )
@@ -132,7 +135,7 @@ class Message:
         try:
             self.sock.close()
         except OSError as e:
-            print(
+            logger.error(
                 "Error: socket.close() exception for "
                 f"{self.addr}: {repr(e)}"
             )
@@ -192,12 +195,13 @@ class Message:
         if self.jsonheader["content-type"] == "text/json":
             encoding = self.jsonheader["content-encoding"]
             self.response = self._json_decode(data, encoding)
-            print(f"Received response {repr(self.response)} from {self.addr}")
+            logger.info(
+                f"Received response {repr(self.response)} from {self.addr}")
             self._process_response_json_content()
         else:
             # binary or unknown content-type
             self.response = data
-            print(
+            logger.info(
                 f"Received {self.jsonheader['content-type']} response from "
                 f"{self.addr}"
             )

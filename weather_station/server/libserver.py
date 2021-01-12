@@ -136,7 +136,7 @@ class Message:
         self._write()
 
     def close(self):
-        logger.info("closing connection to", self.addr)
+        logger.info(f"closing connection to {self.addr}")
         try:
             self.selector.unregister(self.sock)
         except Exception as e:
