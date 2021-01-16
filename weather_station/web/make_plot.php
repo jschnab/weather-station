@@ -12,7 +12,7 @@ $graph = new Graph(600, 400);
 $graph->SetMargin(60, 40, 30, 130);
 $graph->SetScale("datlin");
 $graph->ygrid->SetFill(false);  // call after graph->SetScale()
-$title = "Temperature in " . $_GET["room"];
+$title = ucwords($_GET["param"]) ." in " . $_GET["room"];
 $graph->title->Set($title);
 
 // adjust time axis

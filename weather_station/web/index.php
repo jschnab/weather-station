@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+	<link rel="stylesheet" href="styles.css">
         <title>Home Environment Monitoring</title>
     </head>
     <body>
@@ -25,6 +26,7 @@ echo "<li><a href='index.php?param=humidity&timescale=$timescale'>Humidity</a></
 echo "<li><a href='index.php?param=summary&timescale=$timescale'>Summary</a></li>";
 echo "</ul>";
 echo "</nav>";
+echo "<div id='selectors'>";
 echo "<form action='index.php' method='GET'>";
 echo "<input type='hidden' name='param' value='$param'>";
 echo "<select name='timescale' id='timescale-select' onchange='this.form.submit()'>";
@@ -48,7 +50,8 @@ else {
 }
 echo "</select>";
 echo "</form>";
-echo "<div>";
+echo "</div>";
+echo "<div id='plots'>";
 echo "<p><img src='make_plot.php?param=$param&room=living%20room&timescale=$timescale' /></p>";
 echo "<p><img src='make_plot.php?param=$param&room=master%20bedroom&timescale=$timescale' /></p>";
 ?>
