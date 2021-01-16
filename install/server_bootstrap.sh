@@ -35,7 +35,7 @@ chown -R pi: /etc/weatherstation
 
 # install necessary libraries
 apt update
-apt install -y git apache2 php libapache2-mod-php mariadb-server php-mysql
+apt install -y git apache2 php libapache2-mod-php mariadb-server php-mysql php-gd
 pip3 install mysql-connector-python
 
 # configure and start the dashboard web server
