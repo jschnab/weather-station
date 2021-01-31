@@ -13,7 +13,6 @@ where val > roll_avg - 10 * @std_dev and val < roll_avg + 10 * @std_dev;
 EOT;
         $db = new PDO($con_str, $user, $pw);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$db->beginTransaction();
 	$db->query($sql_query1);
 	$results = $db->query($sql_query2);
         $timestamps = array();
@@ -22,11 +21,9 @@ EOT;
             array_push($timestamps, strtotime($row["ts"]));
             array_push($values, floatval($row["val"]));
         }
-	$db->commit();
     }
 
     catch (PDOException $e) {
-	$db->rollBack();
         printf("Error: %s\n", $e->getMessage());
     }
 
