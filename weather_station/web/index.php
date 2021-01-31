@@ -6,6 +6,7 @@
         <title>Home Environment Monitoring</title>
     </head>
     <body>
+    <div id="layout">
     <nav>
     <ul>
 <?php
@@ -52,9 +53,10 @@ echo "</select>";
 echo "</form>";
 echo "</div>";
 echo "<div id='plots'>";
-echo "<p><img src='make_plot.php?param=$param&room=living%20room&timescale=$timescale' /></p>";
-echo "<p><img src='make_plot.php?param=$param&room=master%20bedroom&timescale=$timescale' /></p>";
+echo "<img id='plotA' src='make_plot.php?param=$param&room=living%20room&timescale=$timescale'/>";
+echo "<img id='plotB' src='make_plot.php?param=$param&room=master%20bedroom&timescale=$timescale'/>";
 ?>
-</div>
+</div> <!-- plots -->
+</div> <!-- layout -->
 </body>
 </html>

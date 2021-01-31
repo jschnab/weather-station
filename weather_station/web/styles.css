@@ -1,19 +1,29 @@
+/*
 html { box-sizing: border-box; }
 * { box-sizing: inherit; }
+*/
 body {
     font-family: Verdana, sans-serif;
     font-size: 100%;
+}
+#layout {
+    display: grid;
+    grid-template-rows: [menu-start] 3.75em [selectors-start] 3.75em [plots-start] auto;
+    grid-template-areas: "menu" "selectors" "plots";
 }
 nav {
     padding: 1em;
     background-color: #006;
     box-shadow: 0 .25em .5em gray;
+    grid-area: menu;
 }
 nav ul {
     margin: 0;
+    display: flex;
+    justify-content: center;
 }
 nav ul li {
-    display: inline;
+    display: block;
 }
 nav ul li a {
     text-decoration: none;
@@ -31,4 +41,10 @@ nav ul li a:active {
 }
 #selectors {
     margin: 1em 0;
+    grid-area: selectors;
+}
+#plots {
+    grid-area: plots;
+    display: flex;
+    flex-flow: row wrap;
 }
