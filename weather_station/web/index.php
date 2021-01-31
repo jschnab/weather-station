@@ -53,8 +53,8 @@ echo "</select>";
 echo "</form>";
 echo "</div>";
 echo "<div id='plots'>";
-echo "<img id='plotA' src='make_plot.php?param=$param&room=living%20room&timescale=$timescale'/>";
-echo "<img id='plotB' src='make_plot.php?param=$param&room=master%20bedroom&timescale=$timescale'/>";
+echo "<img id='plotA' src='make_plot.php?param=$param&room=living_room&timescale=$timescale'/>";
+echo "<img id='plotB' src='make_plot.php?param=$param&room=master_bedroom&timescale=$timescale'/>";
 ?>
 </div> <!-- plots -->
 </div> <!-- layout -->
