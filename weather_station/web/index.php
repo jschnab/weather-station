@@ -24,7 +24,7 @@ else {
 }
 echo "<li><a href='index.php?param=temperature&timescale=$timescale'>Temperature</a></li>";
 echo "<li><a href='index.php?param=humidity&timescale=$timescale'>Humidity</a></li>";
-echo "<li><a href='index.php?param=summary&timescale=$timescale'>Summary</a></li>";
+echo "<li><a href='summary.php'>Summary</a></li>";
 echo "</ul>";
 echo "</nav>";
 echo "<div id='selectors'>";

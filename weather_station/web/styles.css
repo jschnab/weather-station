@@ -48,3 +48,34 @@ nav ul li a:active {
     display: flex;
     flex-flow: row wrap;
 }
+
+.summary-section {
+    margin: 2em;
+}
+
+.summary-room-name {
+    border-left: solid .5em #006;
+    border-top: solid 2px #006;
+    padding: 0.2em;
+}
+
+#summary-tables {
+    display: flex;
+}
+
+table {
+    border-collapse: collapse;
+    margin-left: 1em;
+}
+
+tr {
+    border-bottom: solid 1px #000;
+}
+
+td {
+    padding-top: .1em;
+}
+
+td.value {
+    padding-left: 1em;
+}
