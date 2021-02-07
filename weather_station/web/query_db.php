@@ -83,4 +83,66 @@ EOT;
     $value = $stmt->fetch(PDO::FETCH_ASSOC)["val"];
     return number_format($value, 1);
 }
+
+
+function avg_day_param($param_name, $room_name) {
+    try {
+        $user = getenv("DB_USER");
+        $pw = getenv("DB_PASSWD");
+        $con_str = "mysql:host=localhost;dbname=weather_station";
+	$sql_query = <<<EOT
+	select avg(val) avg_val from (
+	    select x.timestamp ts, x.value val
+	    from $param_name x
+	    join location l
+	    on x.location_id = l.id
+	    where l.name = ?
+	        and x.timestamp >= now() - interval 30 day
+        ) a
+        where hour(ts) between 6 and 22
+EOT;
+        $db = new PDO($con_str, $user, $pw);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$stmt = $db->prepare($sql_query);
+	$stmt->execute(array($room_name));
+    }
+
+    catch (PDOException $e) {
+        printf("Error: %s\n", $e->getMessage());
+    }
+
+    $value = $stmt->fetch(PDO::FETCH_ASSOC)["avg_val"];
+    return number_format($value, 1);
+}
+
+
+function avg_night_param($param_name, $room_name) {
+    try {
+        $user = getenv("DB_USER");
+        $pw = getenv("DB_PASSWD");
+        $con_str = "mysql:host=localhost;dbname=weather_station";
+	$sql_query = <<<EOT
+	select avg(val) avg_val from (
+	    select x.timestamp ts, x.value val
+	    from $param_name x
+	    join location l
+	    on x.location_id = l.id
+	    where l.name = ?
+	        and x.timestamp >= now() - interval 30 day
+        ) a
+        where hour(ts) >= 22 or date_format(ts, '%H:%i:%s') <= '06:00:00'
+EOT;
+        $db = new PDO($con_str, $user, $pw);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$stmt = $db->prepare($sql_query);
+	$stmt->execute(array($room_name));
+    }
+
+    catch (PDOException $e) {
+        printf("Error: %s\n", $e->getMessage());
+    }
+
+    $value = $stmt->fetch(PDO::FETCH_ASSOC)["avg_val"];
+    return number_format($value, 1);
+}
 ?>

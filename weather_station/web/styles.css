@@ -8,7 +8,7 @@ body {
 }
 #layout {
     display: grid;
-    grid-template-rows: [menu-start] 3.75em [selectors-start] 3.75em [plots-start] auto;
+    grid-template-rows: [menu-start] auto [selectors-start] auto [plots-start] auto;
     grid-template-areas: "menu" "selectors" "plots";
 }
 nav {
