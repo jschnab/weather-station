@@ -1,52 +1,79 @@
-/*
-html { box-sizing: border-box; }
-* { box-sizing: inherit; }
-*/
+html {
+    font-size: calc(0.6em + 0.8vw);
+}
+
 body {
     font-family: Verdana, sans-serif;
     font-size: 100%;
 }
+
 #layout {
     display: grid;
     grid-template-rows: [menu-start] auto [selectors-start] auto [plots-start] auto;
     grid-template-areas: "menu" "selectors" "plots";
 }
+
 nav {
     padding: 1em;
     background-color: #006;
     box-shadow: 0 .25em .5em gray;
     grid-area: menu;
 }
+
 nav ul {
     margin: 0;
     display: flex;
     justify-content: center;
 }
+
 nav ul li {
     display: block;
 }
+
 nav ul li a {
     text-decoration: none;
     color: #fff;
     padding: 1em;
 }
+
 nav ul li a:focus {
     background-color: #008;
 }
+
 nav ul li a:hover {
     background-color: #008;
 }
+
 nav ul li a:active {
     background-color: #00A;
 }
+
+@media screen and (max-width: 400px) {
+    nav ul {
+	padding: 0;
+	justify-content: start;
+    }
+    nav ul li a {
+	padding: 1em 0.5em;
+    }
+}
+
 #selectors {
     margin: 1em 0;
     grid-area: selectors;
 }
+
 #plots {
     grid-area: plots;
     display: flex;
     flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+img {
+    margin-bottom: 2em;
+    min-width: 500px;
+    max-width: 100%;
 }
 
 .summary-section {
