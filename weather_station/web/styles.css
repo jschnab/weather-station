@@ -76,6 +76,13 @@ img {
     max-width: 100%;
 }
 
+@media screen and (max-width: 400px) {
+    img {
+	max-width: 100%;
+	object-fit: contain;
+    }
+}
+
 .summary-section {
     margin: 2em;
 }
