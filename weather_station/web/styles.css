@@ -1,5 +1,5 @@
 html {
-    font-size: calc(0.6em + 0.8vw);
+    font-size: min(calc(0.6em + 0.8vw), 1em);
 }
 
 body {
