@@ -67,7 +67,7 @@ nav ul li a:active {
     grid-area: plots;
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 img {
@@ -84,7 +84,7 @@ img {
 }
 
 .summary-section {
-    margin: 2em;
+    margin: 2em 1em 0em 1em;
 }
 
 .summary-room-name {
@@ -95,6 +95,8 @@ img {
 
 #summary-tables {
     display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
 }
 
 table {
