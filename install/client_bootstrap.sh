@@ -47,12 +47,16 @@ chown -R pi: /etc/weatherstation
 mkdir -p /var/log/weatherstation
 chown -R pi: /var/log/weatherstation
 
-pip3 install Adafruit_Python_DHT mysql-connector-python
+su - pi << EOF
+python3 -m venv ~/.venv
+source ~/.venv/bin/activate
+pip install -U pip setuptools wheel
+pip install Adafruit_Python_DHT mysql-connector-python
+cd ${HERE}/..
+pip install .
+EOF
 
-cp "$HERE"/weatherstation_temperature.service /etc/systemd/system/weatherstation_temperature.service
-
-cd "$HERE"/..
-pip3 install .
+cp ${HERE}/weatherstation_temperature.service /etc/systemd/system/weatherstation_temperature.service
 
 systemctl enable weatherstation_temperature.service
 systemctl start weatherstation_temperature.service
