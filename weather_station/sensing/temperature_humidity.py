@@ -1,11 +1,11 @@
 import csv
 import os
+import time
 
 from datetime import datetime
-from time import sleep
 
-import Adafruit_DHT as dht
 
+from weather_station.sensing.gpio import DHT22
 from weather_station.server.client import send_data
 from weather_station.settings import APP_DIR
 from weather_station.utils.config import get_config
@@ -27,54 +27,52 @@ def write_csv(file_name, data, column_names):
         writer.writerow(data)
 
 
-def measure_temp_humid(sensor_gpio_port, timestamp_format):
-    humid, temp = dht.read_retry(dht.DHT22, sensor_gpio_port)
-    timestamp = datetime.now().strftime(timestamp_format)
-    data = [
-        {
-            "parameter": "temperature",
-            "value": temp,
-            "timestamp": timestamp,
-        },
-        {
-            "parameter": "humidity",
-            "value": humid,
-            "timestamp": timestamp,
-        },
-    ]
-    return data
-
-
 def record():
     config = get_config()
-    location_name = config["location"]["name"]
-    device_id = config["device"]["device_id"]
-    sensor_id = config["temperature"]["sensor_id"]
-    gpio_port = config["temperature"]["gpio_port"]
-    interval_seconds = int(config["temperature"]["interval_seconds"])
-    csv_columns = config["recording"]["csv_columns"].split(",")
-    timestamp_format = config["recording"]["timestamp_format"]
-    host = config["server"]["host"]
-    port = int(config["server"]["port"])
+    sensor = DHT22(int(config["temperature"]["gpio_port"]))
+
+    metadata = {
+        "device_id": config["device"]["device_id"],
+        "sensor_id": config["temperature"]["sensor_id"],
+        "location": config["location"]["name"],
+    }
 
     while True:
-        data = measure_temp_humid(gpio_port, timestamp_format)
-        for d in data:
-            d.update(
+        result = sensor.read_retry()
+        timestamp = datetime.now().strftime(
+            config["recording"]["timestamp_format"]
+        )
+        if result.ok:
+            data = [
                 {
-                    "device_id": device_id,
-                    "sensor_id": sensor_id,
-                    "location": location_name,
-                }
+                    "parameter": "temperature",
+                    "value": result.temperature,
+                    "timestamp": timestamp,
+                    **metadata,
+                },
+                {
+                    "parameter": "humidity",
+                    "value": result.humidity,
+                    "timestamp": timestamp,
+                    **metadata,
+                },
+            ]
+            send_data(
+                data=data,
+                host=config["server"]["host"],
+                port=int(config["server"]["port"]),
             )
-            send_data(data=d, host=host, port=port)
-            parameter = d.pop("parameter")
-            write_csv(
-                file_name=os.path.join(APP_DIR, f"{parameter}.csv"),
-                data=d,
-                column_names=csv_columns,
-            )
-        sleep(interval_seconds)
+            for d in data:
+                parameter = d.pop("parameter")
+                write_csv(
+                    file_name=os.path.join(APP_DIR, f"{parameter}.csv"),
+                    data=d,
+                    column_names=config["recording"]["csv_columns"].split(","),
+                )
+        else:
+            logger.error(f"Sensor reading error: {result.error.name}")
+
+        time.sleep(int(config["temperature"]["interval_seconds"]))
 
 
 if __name__ == "__main__":
