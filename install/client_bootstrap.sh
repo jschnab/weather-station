@@ -51,7 +51,7 @@ su - pi << EOF
 python3 -m venv ~/.venv
 source ~/.venv/bin/activate
 pip install -U pip setuptools wheel
-pip install RPi.GPIO mysql-connector-python
+pip install RPi.GPIO==0.7.*
 cd ${HERE}/..
 pip install .
 EOF
