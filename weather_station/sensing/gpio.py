@@ -1,12 +1,13 @@
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Literal
+from typing import Literal
 
 import RPi.GPIO as GPIO
 
 INVALID_RESULT: float = -1.0
 READ_RETRIES: int = 10
+READ_RETRIES_INTERVAL: float = 0.1
 
 
 class SensorError(Enum):
@@ -23,7 +24,7 @@ class SensorResult:
     humidity: float = INVALID_RESULT
 
     @property
-    def is_valid(self):
+    def is_valid(self) -> bool:
         return all(
             [
                 self.temperature != INVALID_RESULT,
@@ -32,7 +33,7 @@ class SensorResult:
         )
 
     @property
-    def ok(self):
+    def ok(self) -> bool:
         return self.error == SensorError.NO_ERROR
 
 
@@ -49,11 +50,16 @@ class DHT22:
         GPIO.setmode(GPIO.BCM)
         self.pin = pin
 
-    def read_retry(self, retries: int = READ_RETRIES) -> SensorResult:
+    def read_retry(
+        self,
+        retries: int = READ_RETRIES,
+        interval: float = READ_RETRIES_INTERVAL,
+    ) -> SensorResult:
         for _ in range(retries):
             result = self._read()
             if result.ok:
                 break
+            time.sleep(interval)
         return result
 
     def _read(self) -> SensorResult:
@@ -93,7 +99,7 @@ class DHT22:
         GPIO.output(self.pin, sig)
         time.sleep(sleep)
 
-    def _collect_input(self) -> List[bool]:
+    def _collect_input(self) -> list[bool]:
         cnt = 0
         cnt_limit = 100
         last = -1
@@ -113,7 +119,7 @@ class DHT22:
 
         return data
 
-    def _parse_pull_up_lengths(self, data: List[bool]) -> List[int]:
+    def _parse_pull_up_lengths(self, data: list[bool]) -> list[int]:
         state = SensorState.INIT_PULL_DOWN
         lengths = []
         cur_length = 0
@@ -150,7 +156,7 @@ class DHT22:
 
         return lengths
 
-    def _calculate_bits(self, pull_up_lengths: List[int]) -> List[int]:
+    def _calculate_bits(self, pull_up_lengths: list[int]) -> list[int]:
         # find shortest and longest periods
         shortest = 1000
         longest = 0
@@ -169,7 +175,7 @@ class DHT22:
 
         return bits
 
-    def _bits_to_bytes(self, bits: List[int]) -> List[int]:
+    def _bits_to_bytes(self, bits: list[int]) -> list[int]:
         bytes_ = []
         byte = 0
 
@@ -182,16 +188,16 @@ class DHT22:
 
         return bytes_
 
-    def checksum(self, bytes_) -> int:
+    def checksum(self, bytes_: list[int]) -> int:
         return bytes_[0] + bytes_[1] + bytes_[2] + bytes_[3] & 255
 
-    def _calculate_temperature(self, bytes_) -> float:
-        temp = float(((bytes_[2] & 0x7F) << 8) + bytes_[3]) / 10
+    def _calculate_temperature(self, bytes_: list[int]) -> float:
+        temp = (((bytes_[2] & 0x7F) << 8) + bytes_[3]) / 10
         if temp > 125:
             return bytes_[2]
         if bytes_[2] & 0x80:
             return -temp
         return temp
 
-    def _calculate_humidity(self, bytes_) -> float:
-        return ((bytes_[0] << 8) + bytes_[1]) / 10
+    def _calculate_humidity(self, bytes_: list[int]) -> float:
+        return (((bytes_[0] & 0x7F) << 8) + bytes_[1]) / 10

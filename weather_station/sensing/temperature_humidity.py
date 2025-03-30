@@ -30,9 +30,6 @@ def write_csv(file_name, data, column_names):
 def record():
     config = get_config()
     sensor = DHT22(int(config["temperature"]["gpio_port"]))
-    timestamp = datetime.now().strftime(
-        config["recording"]["timestamp_format"]
-    )
 
     metadata = {
         "device_id": config["device"]["device_id"],
@@ -42,6 +39,9 @@ def record():
 
     while True:
         result = sensor.read_retry()
+        timestamp = datetime.now().strftime(
+            config["recording"]["timestamp_format"]
+        )
         if result.ok:
             data = [
                 {
