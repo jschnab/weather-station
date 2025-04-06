@@ -10,7 +10,7 @@ def validate_config(config: ConfigParser) -> None:
     port = int(config["server"]["port"])
     if not 1024 <= port <= 65536:
         raise ValueError(
-            f"Server port should be between 1001 and 65536, got: {port}"
+            f"Server port should be between 1024 and 65536, got: {port}"
         )
 
 

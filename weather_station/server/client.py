@@ -46,7 +46,7 @@ def send_data(data: dict[str, Any], host: str, port: int) -> None:
                 message.process_events(mask)
             except Exception:
                 logger.error(
-                    f"Error for {message.addr}:\n" f"{traceback.format_exc()}"
+                    f"Error for {message.addr}:\n{traceback.format_exc()}"
                 )
                 message.close()
     sel.close()
