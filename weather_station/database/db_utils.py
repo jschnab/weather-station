@@ -7,7 +7,9 @@ from weather_station.utils.log import get_logger
 logger = get_logger()
 
 
-def get_connection(autocommit=False):
+def get_connection(
+    autocommit: bool = False,
+) -> mysql.connector.connection.MySQLConnection:
     """
     Get a connection to a MySQL database.
 
@@ -98,7 +100,7 @@ def query_sql(
             conn.close()
 
 
-def load_data(data):
+def load_data(data: dict) -> None:
     """
     Load a sensor recording event in the database, formatted as a dictionary
     with the following keys: parameter, value, timestamp, location, device_id,
@@ -156,4 +158,4 @@ def load_data(data):
 
     else:
         # unsupported parameter
-        pass
+        logger.warning(f"Unsupported parameter '{param}'")
