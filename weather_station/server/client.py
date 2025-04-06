@@ -3,6 +3,7 @@
 import selectors
 import socket
 import traceback
+from typing import Any
 
 from weather_station.server import libclient
 from weather_station.utils.config import get_config
@@ -11,7 +12,12 @@ from weather_station.utils.log import get_logger
 logger = get_logger()
 
 
-def start_connection(selector, host, port, request):
+def start_connection(
+    selector: selectors.DefaultSelector,
+    host: str,
+    port: int,
+    request: dict[str, Any],
+) -> None:
     addr = (host, port)
     logger.info(f"Starting connection to {addr}")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,11 +28,11 @@ def start_connection(selector, host, port, request):
     selector.register(sock, events, data=message)
 
 
-def send_data(data, host, port):
+def send_data(data: dict[str, Any], host: str, port: int) -> None:
     request = {
         "type": "text/json",
         "encoding": get_config()["client"]["encoding"],
-        "content": data
+        "content": data,
     }
     sel = selectors.DefaultSelector()
     start_connection(sel, host, port, request)
@@ -40,14 +46,13 @@ def send_data(data, host, port):
                 message.process_events(mask)
             except Exception:
                 logger.error(
-                    f"Error for {message.addr}:\n"
-                    f"{traceback.format_exc()}"
+                    f"Error for {message.addr}:\n" f"{traceback.format_exc()}"
                 )
                 message.close()
     sel.close()
 
 
-def main():
+def main() -> None:
     data = {
         "parameter": "temperature",
         "value": 17.401,

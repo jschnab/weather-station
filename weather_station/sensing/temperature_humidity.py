@@ -1,6 +1,7 @@
 import csv
 import os
 import time
+from typing import Any
 
 from datetime import datetime
 
@@ -14,7 +15,9 @@ from weather_station.utils.log import get_logger
 logger = get_logger()
 
 
-def write_csv(file_name, data, column_names):
+def write_csv(
+    file_name: str, data: dict[str, Any], column_names: list[str]
+) -> None:
     """
     Write data to a CSV file.
 
@@ -27,7 +30,7 @@ def write_csv(file_name, data, column_names):
         writer.writerow(data)
 
 
-def record():
+def record() -> None:
     config = get_config()
     sensor = DHT22(int(config["temperature"]["gpio_port"]))
 
@@ -57,16 +60,16 @@ def record():
                     **metadata,
                 },
             ]
-            send_data(
-                data=data,
-                host=config["server"]["host"],
-                port=int(config["server"]["port"]),
-            )
-            for d in data:
-                parameter = d.pop("parameter")
+            for da in data:
+                send_data(
+                    data=da,
+                    host=config["server"]["host"],
+                    port=int(config["server"]["port"]),
+                )
+                parameter = da.pop("parameter")
                 write_csv(
                     file_name=os.path.join(APP_DIR, f"{parameter}.csv"),
-                    data=d,
+                    data=da,
                     column_names=config["recording"]["csv_columns"].split(","),
                 )
         else:

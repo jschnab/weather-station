@@ -20,5 +20,6 @@ def get_logger():
         format="%(asctime)s %(levelname)s %(message)s",
         level=level[config["level"]],
         filename=config["log_file"],
-        filemode="a")
+        filemode="a",
+    )
     return logging.getLogger()

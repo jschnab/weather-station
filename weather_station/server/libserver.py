@@ -192,7 +192,8 @@ class Message:
             self.request = self._json_decode(data, encoding)
             db_utils.load_data(self.request)
             logger.info(
-                f"Received request {repr(self.request)} from {self.addr}")
+                f"Received request {repr(self.request)} from {self.addr}"
+            )
 
         else:
             # binary or unknown content-type
