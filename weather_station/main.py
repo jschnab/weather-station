@@ -8,10 +8,12 @@ def main():
 
     if args.listen:
         from weather_station.server import server
+
         server.listen()
 
     if args.temperature:
         from weather_station.sensing import temperature_humidity
+
         temperature_humidity.record()
 
 

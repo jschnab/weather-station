@@ -70,7 +70,11 @@ class Message:
         return json.loads(json_bytes.decode(encoding))
 
     def _create_message(
-        self, *, content_bytes, content_type, content_encoding,
+        self,
+        *,
+        content_bytes,
+        content_type,
+        content_encoding,
     ):
         jsonheader = {
             "byteorder": sys.byteorder,
@@ -196,7 +200,8 @@ class Message:
             encoding = self.jsonheader["content-encoding"]
             self.response = self._json_decode(data, encoding)
             logger.info(
-                f"Received response {repr(self.response)} from {self.addr}")
+                f"Received response {repr(self.response)} from {self.addr}"
+            )
             self._process_response_json_content()
         else:
             # binary or unknown content-type

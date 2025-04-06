@@ -11,7 +11,7 @@ from weather_station.utils.log import get_logger
 logger = get_logger()
 
 
-def accept_wrapper(sock, selector):
+def accept_wrapper(sock, selector: selectors.DefaultSelector) -> None:
     conn, addr = sock.accept()
     logger.info(f"Accepted connection from {addr}")
     conn.setblocking(False)
@@ -19,7 +19,7 @@ def accept_wrapper(sock, selector):
     selector.register(conn, selectors.EVENT_READ, data=message)
 
 
-def start_server(host, port):
+def start_server(host: str, port: int) -> None:
     sel = selectors.DefaultSelector()
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # avoid bind() exception: OSError: [Errno 48] Address already in use
@@ -48,7 +48,7 @@ def start_server(host, port):
     sel.close()
 
 
-def listen():
+def listen() -> None:
     config = get_config()["server"]
     port = int(config["port"])
     start_server(config["bind_address"], port)

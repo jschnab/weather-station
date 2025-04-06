@@ -43,25 +43,33 @@ def filter_outliers(df):
     """
     temp_med = df[TEMPERATURE_COLUMN].median()
     df["temp_med"] = df[TEMPERATURE_COLUMN].rolling(WINDOW).median()
-    df["temp_mad"] = df[TEMPERATURE_COLUMN].rolling(WINDOW).apply(
-        mad,
-        raw=True,
-        kwargs={"median": temp_med},
+    df["temp_mad"] = (
+        df[TEMPERATURE_COLUMN]
+        .rolling(WINDOW)
+        .apply(
+            mad,
+            raw=True,
+            kwargs={"median": temp_med},
+        )
     )
 
     humid_med = df[HUMIDITY_COLUMN].median()
     df["humid_med"] = df[HUMIDITY_COLUMN].rolling(WINDOW).median()
-    df["humid_mad"] = df[HUMIDITY_COLUMN].rolling(WINDOW).apply(
-        mad,
-        raw=True,
-        kwargs={"median": humid_med},
+    df["humid_mad"] = (
+        df[HUMIDITY_COLUMN]
+        .rolling(WINDOW)
+        .apply(
+            mad,
+            raw=True,
+            kwargs={"median": humid_med},
+        )
     )
 
     filtered = df[
-        (df["temperature"] > df["temp_med"] - 5 * df["temp_mad"]) &
-        (df["temperature"] < df["temp_med"] + 5 * df["temp_mad"]) &
-        (df["humidity"] > df["humid_med"] - 10 * df["humid_mad"]) &
-        (df["humidity"] < df["humid_med"] + 10 * df["humid_mad"])
+        (df["temperature"] > df["temp_med"] - 5 * df["temp_mad"])
+        & (df["temperature"] < df["temp_med"] + 5 * df["temp_mad"])
+        & (df["humidity"] > df["humid_med"] - 10 * df["humid_mad"])
+        & (df["humidity"] < df["humid_med"] + 10 * df["humid_mad"])
     ]
 
     return filtered
@@ -120,12 +128,12 @@ def plot_temp_humid(csv_path, timeframe="day"):
     ax2.set_ylabel(HUMIDITY_LABEL, fontsize=16)
 
     if timeframe == "hour":
-        ax1.xaxis.set_major_locator(mdates.MinuteLocator(
-            byminute=EVERY_15_MINUTES)
+        ax1.xaxis.set_major_locator(
+            mdates.MinuteLocator(byminute=EVERY_15_MINUTES)
         )
         ax1.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
-        ax1.xaxis.set_minor_locator(mdates.MinuteLocator(
-            byminute=EVERY_5_MINUTES)
+        ax1.xaxis.set_minor_locator(
+            mdates.MinuteLocator(byminute=EVERY_5_MINUTES)
         )
 
     elif timeframe == "day":
