@@ -36,7 +36,15 @@ chown -R pi: /etc/weatherstation
 # install necessary libraries
 apt update
 apt install -y git apache2 php libapache2-mod-php mariadb-server php-mysql php-gd
-pip3 install mysql-connector-python
+
+su - pi << EOF
+python3 -m venv ~/.weatherstation_venv
+source ~/.weatherstation_venv/bin/activate
+pip install -U pip setuptools wheel
+pip install mysql-connector-python==9.3.*
+cd ${HERE}/..
+pip install .
+EOF
 
 # configure and start the dashboard web server
 echo "export DB_USER=$DB_USER" >> /etc/apache2/envvars
@@ -44,7 +52,7 @@ echo "export DB_PASSWD=$DB_PASSWD" >> /etc/apache2/envvars
 cp "$HERE"/apache-virtual-server.conf /etc/apache2/sites-available/000-default.conf
 chown www-data: /etc/apache2/sites-available/000-default.conf
 mkdir -p /var/www/html/weather_station
-cp -R "$HERE"/../weather-station/web/* /var/www/html/weather_station/
+cp -R "$HERE"/../weather_station/web/* /var/www/html/weather_station/
 chown -R  www-data: /var/www/html/weather_station/
 curl "https://jpgraph.net/download/download.php?p=49" > jpgraph.tar.gz
 tar -xzf jpgraph.tar.gz -C /usr/share/
@@ -62,7 +70,5 @@ systemctl restart mariadb.service
 cp "$HERE"/weatherstation_server.service /etc/systemd/system/weatherstation_server.service
 mkdir -p /var/log/weatherstation
 chown -R pi: /var/log/weatherstation
-cd "$HERE"/..
-pip3 install .
 systemctl enable weatherstation_server.service
 systemctl start weatherstation_server.service
