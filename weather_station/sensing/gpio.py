@@ -66,7 +66,7 @@ class DHT22:
             if result.ok:
                 LOGGER.debug("Read was successful")
                 break
-            LOGGER.debug("Sleeping for {interval} seconds")
+            LOGGER.debug(f"Sleeping for {interval} seconds")
             time.sleep(interval)
         return result
 
@@ -76,10 +76,10 @@ class DHT22:
         LOGGER.debug(f"Pin {self.pin} is ready for output")
 
         # send initial high and pull down to low
-        LOGGER.debug(f"Sending high-low pulse")
+        LOGGER.debug("Sending high-low pulse")
         self._send_and_sleep(GPIO.HIGH, 0.05)
         self._send_and_sleep(GPIO.LOW, 0.02)
-        LOGGER.debug(f"Successfully sent high-low pulse")
+        LOGGER.debug("Successfully sent high-low pulse")
 
         # change to input using pull up
         LOGGER.debug(f"Setting up pin {self.pin} for input using pull up")
