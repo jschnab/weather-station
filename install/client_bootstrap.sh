@@ -11,6 +11,10 @@ TEMPERATURE_GPIO_PORT=
 TEMPERATURE_SENSOR_ID=
 SERVER_HOST=
 SERVER_PORT=
+APP_USERNAME=
+
+VENV_PATH=/home/${APP_USERNAME}/.weatherstation_venv
+SERVICE_NAME=weatherstation_temperature.service
 
 mkdir -p /etc/weatherstation
 cat << EOF > /etc/weatherstation/weatherstation.conf
@@ -42,21 +46,35 @@ encoding = utf-8
 log_file = /var/log/weatherstation/log
 level = info
 EOF
-chown -R pi: /etc/weatherstation
+chown -R ${APP_USERNAME}: /etc/weatherstation
 
 mkdir -p /var/log/weatherstation
-chown -R pi: /var/log/weatherstation
+chown -R ${APP_USERNAME}: /var/log/weatherstation
 
-su - pi << EOF
-python3 -m venv ~/.venv
-source ~/.venv/bin/activate
+su - ${APP_USERNAME} << EOF
+python3 -m venv ${VENV_PATH}
+source ${VENV_PATH}/bin/activate
 pip install -U pip setuptools wheel
 pip install RPi.GPIO==0.7.*
 cd ${HERE}/..
 pip install .
 EOF
 
-cp ${HERE}/weatherstation_temperature.service /etc/systemd/system/weatherstation_temperature.service
+cat << EOF > /etc/systemd/system/${SERVICE_NAME}
+[Unit]
+Description=weather station temperature and humidity recording
+After=network.target
 
-systemctl enable weatherstation_temperature.service
-systemctl start weatherstation_temperature.service
+[Service]
+User=${APP_USERNAME}
+Group=${APP_USERNAME}
+ExecStart=${VENV_PATH}/bin/weather-station -t
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable ${SERVICE_NAME}
+systemctl start ${SERVICE_NAME}
