@@ -18,7 +18,7 @@ class SensorError(Enum):
     NO_ERROR = 0
     MISSING_DATA = 1
     CHECKSUM = 2
-    NOT_FOUND = 3
+    NO_DATA = 3
 
 
 @dataclass
@@ -59,19 +59,20 @@ class DHT22:
         retries: int = READ_RETRIES,
         interval: float = READ_RETRIES_INTERVAL,
     ) -> SensorResult:
-        LOGGER.debug(f"Reading sensor on pin {self.pin}")
         for retn in range(retries):
-            LOGGER.debug(f"Trial {retn + 1}/{retries}")
+            LOGGER.debug(f"Trying to read sensor data {retn + 1}/{retries}")
             result = self._read()
             if result.ok:
                 LOGGER.debug("Read was successful")
                 break
             LOGGER.debug(f"Sleeping for {interval} seconds")
             time.sleep(interval)
+        else:
+            LOGGER.debug("Read was not successful")
         return result
 
     def _read(self) -> SensorResult:
-        LOGGER.debug(f"Settting up pin {self.pin} for output")
+        LOGGER.debug(f"Setting up pin {self.pin} for output")
         GPIO.setup(self.pin, GPIO.OUT)
         LOGGER.debug(f"Pin {self.pin} is ready for output")
 
@@ -94,7 +95,7 @@ class DHT22:
 
         if len(pull_up_lengths) == 0:
             LOGGER.debug("No data was collected")
-            return SensorResult(SensorError.NOT_FOUND)
+            return SensorResult(SensorError.NO_DATA)
 
         if len(pull_up_lengths) != 40:
             LOGGER.debug("Incomplete sensor data")

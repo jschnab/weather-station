@@ -41,9 +41,9 @@ def record() -> None:
     }
 
     while True:
-        LOGGER.debug("Preparing to read sensor data")
+        logger.debug("Preparing to read sensor data")
         result = sensor.read_retry()
-        LOGGER.debug("Finished reading sensor data")
+        logger.debug("Finished reading sensor data")
         timestamp = datetime.now().strftime(
             config["recording"]["timestamp_format"]
         )

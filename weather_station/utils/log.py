@@ -17,7 +17,7 @@ def get_logger() -> logging.Logger:
     }
     config = get_config()["logging"]
     logging.basicConfig(
-        format="%(asctime)s %(filename) %(levelname)s %(message)s",
+        format="%(asctime)s %(filename)s %(levelname)s %(message)s",
         level=level[config["level"]],
         filename=config["log_file"],
         filemode="a",
