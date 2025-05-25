@@ -5,6 +5,10 @@ from typing import Literal
 
 import RPi.GPIO as GPIO
 
+from weather_station.utils.log import get_logger
+
+LOGGER = get_logger()
+
 INVALID_RESULT: float = -1.0
 READ_RETRIES: int = 10
 READ_RETRIES_INTERVAL: float = 0.1
@@ -55,40 +59,60 @@ class DHT22:
         retries: int = READ_RETRIES,
         interval: float = READ_RETRIES_INTERVAL,
     ) -> SensorResult:
-        for _ in range(retries):
+        LOGGER.debug(f"Reading sensor on pin {self.pin}")
+        for retn in range(retries):
+            LOGGER.debug(f"Trial {retn + 1}/{retries}")
             result = self._read()
             if result.ok:
+                LOGGER.debug("Read was successful")
                 break
+            LOGGER.debug("Sleeping for {interval} seconds")
             time.sleep(interval)
         return result
 
     def _read(self) -> SensorResult:
+        LOGGER.debug(f"Settting up pin {self.pin} for output")
         GPIO.setup(self.pin, GPIO.OUT)
+        LOGGER.debug(f"Pin {self.pin} is ready for output")
 
         # send initial high and pull down to low
+        LOGGER.debug(f"Sending high-low pulse")
         self._send_and_sleep(GPIO.HIGH, 0.05)
         self._send_and_sleep(GPIO.LOW, 0.02)
+        LOGGER.debug(f"Successfully sent high-low pulse")
 
         # change to input using pull up
+        LOGGER.debug(f"Setting up pin {self.pin} for input using pull up")
         GPIO.setup(self.pin, GPIO.IN, GPIO.PUD_UP)
+        LOGGER.debug(f"Pin {self.pin} is ready for input using pull up")
 
+        LOGGER.debug("Collecting input")
         data = self._collect_input()
+        LOGGER.debug("Successfully collected input")
 
         pull_up_lengths = self._parse_pull_up_lengths(data)
 
         if len(pull_up_lengths) == 0:
+            LOGGER.debug("No data was collected")
             return SensorResult(SensorError.NOT_FOUND)
 
         if len(pull_up_lengths) != 40:
+            LOGGER.debug("Incomplete sensor data")
             return SensorResult(SensorError.MISSING_DATA)
 
+        LOGGER.debug("Calculating bits")
         bits = self._calculate_bits(pull_up_lengths)
+        LOGGER.debug("Successfully calculated bits")
 
+        LOGGER.debug("Converting to bytes")
         bytes_ = self._bits_to_bytes(bits)
+        LOGGER.debug("Successfully converting to bytes")
 
         if bytes_[4] != self.checksum(bytes_):
+            LOGGER.debug("Bad checksum")
             return SensorResult(SensorError.CHECKSUM)
 
+        LOGGER.debug("Sensor data is correct")
         return SensorResult(
             SensorError.NO_ERROR,
             self._calculate_temperature(bytes_),

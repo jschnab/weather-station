@@ -3,7 +3,7 @@ import logging
 from weather_station.utils.config import get_config
 
 
-def get_logger():
+def get_logger() -> logging.Logger:
     """
     Configure logging.
     :returns: logger object
@@ -17,7 +17,7 @@ def get_logger():
     }
     config = get_config()["logging"]
     logging.basicConfig(
-        format="%(asctime)s %(levelname)s %(message)s",
+        format="%(asctime)s %(filename) %(levelname)s %(message)s",
         level=level[config["level"]],
         filename=config["log_file"],
         filemode="a",
